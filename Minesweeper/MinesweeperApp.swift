@@ -9,9 +9,10 @@ import SwiftUI
 
 @main
 struct MinesweeperApp: App {
+    let game = MinesweeperGame()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(viewModel: game)
         }
     }
 }
