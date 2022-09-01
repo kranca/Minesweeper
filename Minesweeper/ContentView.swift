@@ -20,10 +20,15 @@ struct ContentView: View {
                             .foregroundColor(location.isOpen ? .brown : .black)
                         Text(viewModel.board[location]!)
                             .opacity(location.isOpen ? 1 : 0)
+                        Text("🚩")
+                            .opacity(location.hasFlag ? 1: 0)
                     }
                     .frame(minWidth: 25, minHeight: 25)
                     .onTapGesture {
                         viewModel.open(location)
+                    }
+                    .onLongPressGesture {
+                        viewModel.placeFlag(on: location)
                     }
                 }
             }

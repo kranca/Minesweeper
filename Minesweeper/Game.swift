@@ -105,7 +105,7 @@ struct Game {
     }
     
     mutating func open(_ location: Location) {
-        if !location.isOpen {
+        if !location.isOpen && !location.hasFlag {
             if let chosenLocation = board.keys.firstIndex(where: { $0 == location }) {
                 let locationValue = board[location]
                 board.remove(at: chosenLocation)
@@ -117,6 +117,17 @@ struct Game {
                         open(neighbour)
                     }
                 }
+            }
+        }
+    }
+    
+    mutating func placeFlag(on location: Location) {
+        if !location.isOpen {
+            if let chosenLocation = board.keys.firstIndex(where: { $0 == location }) {
+                let locationValue = board[location]
+                board.remove(at: chosenLocation)
+                let updatedLocation = Location(x: location.x, y: location.y, hasFlag: !location.hasFlag)
+                board[updatedLocation] = locationValue
             }
         }
     }
@@ -141,5 +152,6 @@ struct Location: Hashable, Comparable {
     let y: Int
     
     var isOpen = false
+    var hasFlag = false
 }
 

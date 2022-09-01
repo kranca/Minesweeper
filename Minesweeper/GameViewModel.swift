@@ -38,4 +38,8 @@ class MinesweeperGame: ObservableObject {
     func open(_ location: Location) {
         model.open(location)
     }
+    
+    func placeFlag(on location: Location) {
+        model.placeFlag(on: location)
+    }
 }
