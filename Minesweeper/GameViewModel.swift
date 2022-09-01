@@ -16,7 +16,6 @@ class MinesweeperGame: ObservableObject {
     
     init() {
         self.model = MinesweeperGame.createMinesweeperGame()
-        
     }
     
     var board: [Location : String] {
@@ -29,5 +28,9 @@ class MinesweeperGame: ObservableObject {
     
     var height: Int {
         model.getHeight
+    }
+    
+    var locations: [Location] {
+        model.getLocations
     }
 }

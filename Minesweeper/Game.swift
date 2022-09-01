@@ -21,8 +21,8 @@ struct Game {
         self.board = [Location: String]()
         
         // populate board with 0's
-        for x in 0...(width - 1) {
-            for y in 0...(height - 1) {
+        for y in 0...(height - 1) {
+            for x in 0...(width - 1) {
                 board[Location(x: x, y: y)] = "0"
             }
         }
@@ -48,7 +48,6 @@ struct Game {
                 }
             }
         }
-        print(neighbours(of: Location(x: 3, y: 1)))
     }
     
     private func neighbours(of location: Location) -> [Location] {
@@ -100,9 +99,27 @@ struct Game {
     var getBoard: [Location : String] {
         board
     }
+    
+    var getLocations: [Location] {
+        board.keys.sorted(by: { $0 < $1 })
+    }
 }
 
-struct Location: Hashable, Equatable {
+struct Location: Hashable, Comparable {
+    static func < (lhs: Location, rhs: Location) -> Bool {
+        if lhs.y < rhs.y {
+            return true
+        } else if lhs.y == rhs.y {
+            if lhs.x < rhs.x {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+    
     let x: Int
     let y: Int
 }

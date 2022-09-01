@@ -11,13 +11,12 @@ struct ContentView: View {
     @ObservedObject var viewModel: MinesweeperGame
     
     var body: some View {
-        VStack(alignment: .leading) {
-            ForEach(0...viewModel.height - 1, id: \.self) { y in
-                HStack {
-                    ForEach(0...viewModel.width - 1, id: \.self) { x in
-                        Text(viewModel.board[Location(x: x, y: y)]!)
-                            .frame(minWidth: 25, minHeight: 25)
-                    }
+        VStack {
+            let columns: [GridItem] = Array(repeating: .init(.adaptive(minimum: 25)), count: viewModel.width)
+            LazyVGrid(columns: columns) {
+                ForEach(viewModel.locations, id: \.self) { location in
+                    Text(viewModel.board[location]!)
+                        .frame(minWidth: 25, minHeight: 25)
                 }
             }
         }
