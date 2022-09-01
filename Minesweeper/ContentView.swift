@@ -12,11 +12,19 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            let columns: [GridItem] = Array(repeating: .init(.adaptive(minimum: 25)), count: viewModel.width)
+            let columns: [GridItem] = Array(repeating: .init(.fixed(25)), count: viewModel.width)
             LazyVGrid(columns: columns) {
                 ForEach(viewModel.locations, id: \.self) { location in
-                    Text(viewModel.board[location]!)
-                        .frame(minWidth: 25, minHeight: 25)
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 5)
+                            .foregroundColor(location.isOpen ? .brown : .black)
+                        Text(viewModel.board[location]!)
+                            .opacity(location.isOpen ? 1 : 0)
+                    }
+                    .frame(minWidth: 25, minHeight: 25)
+                    .onTapGesture {
+                        viewModel.open(location)
+                    }
                 }
             }
         }

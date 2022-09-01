@@ -103,6 +103,23 @@ struct Game {
     var getLocations: [Location] {
         board.keys.sorted(by: { $0 < $1 })
     }
+    
+    mutating func open(_ location: Location) {
+        if !location.isOpen {
+            if let chosenLocation = board.keys.firstIndex(where: { $0 == location }) {
+                let locationValue = board[location]
+                board.remove(at: chosenLocation)
+                let updatedLocation = Location(x: location.x, y: location.y, isOpen: true)
+                board[updatedLocation] = locationValue
+                if locationValue == "0" {
+                    let neighboringToOpen = neighbours(of: updatedLocation)
+                    for neighbour in neighboringToOpen {
+                        open(neighbour)
+                    }
+                }
+            }
+        }
+    }
 }
 
 struct Location: Hashable, Comparable {
@@ -122,5 +139,7 @@ struct Location: Hashable, Comparable {
     
     let x: Int
     let y: Int
+    
+    var isOpen = false
 }
 
