@@ -33,6 +33,14 @@ class MinesweeperGame: ObservableObject {
     var locations: [Location] {
         model.getLocations
     }
+    var bombs: Int {
+        model.bombsCount
+    }
+    
+    var flags: Int {
+        model.flagsCount
+    }
+
     
     // MARK: - Intents
     func open(_ location: Location) {

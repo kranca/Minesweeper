@@ -28,7 +28,7 @@ struct Game {
         }
         
         // define random locations for the bombs
-        for _ in 0...(width * height * 3 / 10)-1 {
+        for _ in 0...(width * height * 2 / 10)-1 {
             var bombLocation: Location
             repeat {
                 bombLocation = Location(x: Int.random(in: 0...width-1), y: Int.random(in: 0...height-1))
@@ -50,7 +50,7 @@ struct Game {
         }
     }
     
-    private func neighbours(of location: Location) -> [Location] {
+    func neighbours(of location: Location) -> [Location] {
         var neighbours = [Location]()
         // left-up
         if location.x > 0 && location.y > 0 {
@@ -102,6 +102,20 @@ struct Game {
     
     var getLocations: [Location] {
         board.keys.sorted(by: { $0 < $1 })
+    }
+    
+    var bombsCount: Int {
+        bombs.count
+    }
+    
+    var flagsCount: Int {
+        var flags = 0
+        for location in board.keys {
+            if location.hasFlag {
+                flags += 1
+            }
+        }
+        return flags
     }
     
     mutating func open(_ location: Location) {
