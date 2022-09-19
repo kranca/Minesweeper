@@ -15,6 +15,8 @@ struct Game {
     
     private var bombs = [Location]()
     
+    private var gameHasStarted = false
+    
     init(width: Int, height: Int) {
         self.width = width
         self.height = height
@@ -26,31 +28,9 @@ struct Game {
                 board[Location(x: x, y: y)] = "0"
             }
         }
-        
-        // define random locations for the bombs
-        for _ in 0...(width * height * 2 / 10)-1 {
-            var bombLocation: Location
-            repeat {
-                bombLocation = Location(x: Int.random(in: 0...width-1), y: Int.random(in: 0...height-1))
-            } while board[bombLocation] == "💣"
-            
-            board[bombLocation] = "💣"
-            bombs.append(bombLocation)
-        }
-        
-        // update locations adjacent to bombs to indicate how many bombs are directly adjacent to them
-        for bomb in bombs {
-            for location in neighbours(of: bomb) {
-                if board[location] != "💣" {
-                    if let noBomb = board[location] {
-                        board[location] = String(Int(noBomb)! + 1)
-                    }
-                }
-            }
-        }
     }
     
-    func neighbours(of location: Location) -> [Location] {
+    private func neighbours(of location: Location) -> [Location] {
         var neighbours = [Location]()
         // left-up
         if location.x > 0 && location.y > 0 {
@@ -116,6 +96,32 @@ struct Game {
             }
         }
         return flags
+    }
+    
+    mutating func openFirst(_ location: Location) {
+        // define random locations for the bombs and avoid more than one bomb in the same location or a bomb on first opened location or direct neighbours
+        for _ in 0...(width * height * 2 / 10)-1 {
+            var bombLocation: Location
+            repeat {
+                bombLocation = Location(x: Int.random(in: 0...width-1), y: Int.random(in: 0...height-1))
+            } while board[bombLocation] == "💣" || bombLocation == location || neighbours(of: location).contains(bombLocation)
+            
+            board[bombLocation] = "💣"
+            bombs.append(bombLocation)
+        }
+        
+        // update locations adjacent to bombs to indicate how many bombs are directly adjacent to them
+        for bomb in bombs {
+            for location in neighbours(of: bomb) {
+                if board[location] != "💣" {
+                    if let noBomb = board[location] {
+                        board[location] = String(Int(noBomb)! + 1)
+                    }
+                }
+            }
+        }
+        // open first location
+        open(location)
     }
     
     mutating func open(_ location: Location) {

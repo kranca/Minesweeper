@@ -43,8 +43,15 @@ class MinesweeperGame: ObservableObject {
 
     
     // MARK: - Intents
+    var firstLocationOpen = false
+    
     func open(_ location: Location) {
-        model.open(location)
+        if !firstLocationOpen {
+            model.openFirst(location)
+            firstLocationOpen = true
+        } else {
+            model.open(location)
+        }
     }
     
     func placeFlag(on location: Location) {
