@@ -28,8 +28,9 @@ class MinesweeperUITests: XCTestCase {
         app.launch()
 
         // Use XCTAssert and related functions to verify your tests produce the correct results.
-        XCTAssert(app.staticTexts["1"].exists, "Expected at least one Location to contain 1")
-        app.staticTexts["1"].firstMatch.tap()
+        XCTAssertFalse(app.staticTexts["1"].exists, "Expected all Locations to be 0 before first location is opned")
+        XCTAssertFalse(app.staticTexts["💣"].exists, "Expected no Location to contain a bomb")
+        app.staticTexts["0"].firstMatch.tap()
         XCTAssert(app.staticTexts["💣"].exists, "Expected at least one Location to contain a bomb")
         app.staticTexts["💣"].firstMatch.press(forDuration: 2)
         app.staticTexts["💣"].firstMatch.tap()

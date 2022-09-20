@@ -15,7 +15,8 @@ struct Game {
     
     private var bombs = [Location]()
     
-    private var gameHasStarted = false
+    private(set) var gameHasStarted = false
+    private(set) var gameHasEnded = false
     
     init(width: Int, height: Int) {
         self.width = width
@@ -122,33 +123,35 @@ struct Game {
         }
         // open first location
         open(location)
+        gameHasStarted = true
     }
     
     mutating func open(_ location: Location) {
-        if !location.isOpen && !location.hasFlag {
-            if let chosenLocation = board.keys.firstIndex(where: { $0 == location }) {
-                let locationValue = board[location]
-                board.remove(at: chosenLocation)
-                let updatedLocation = Location(x: location.x, y: location.y, isOpen: true)
-                board[updatedLocation] = locationValue
+        if !location.isOpen && !location.hasFlag && !gameHasEnded {
+            if let locationValue = board.updateLocation(location: location, isOpen: true, hasFlag: location.hasFlag) {
                 if locationValue == "0" {
-                    let neighboringToOpen = neighbours(of: updatedLocation)
+                    let neighboringToOpen = neighbours(of: location)
                     for neighbour in neighboringToOpen {
                         open(neighbour)
                     }
+                }
+                if locationValue == "💣" {
+                    showAllBombs()
+                    gameHasEnded = true
                 }
             }
         }
     }
     
+    private mutating func showAllBombs() {
+        for location in bombs {
+            _ = board.updateLocation(location: location, isOpen: true, hasFlag: location.hasFlag)
+        }
+    }
+    
     mutating func placeFlag(on location: Location) {
-        if !location.isOpen {
-            if let chosenLocation = board.keys.firstIndex(where: { $0 == location }) {
-                let locationValue = board[location]
-                board.remove(at: chosenLocation)
-                let updatedLocation = Location(x: location.x, y: location.y, hasFlag: !location.hasFlag)
-                board[updatedLocation] = locationValue
-            }
+        if !location.isOpen && gameHasStarted && !gameHasEnded {
+            _ = board.updateLocation(location: location, isOpen: location.isOpen, hasFlag: !location.hasFlag)
         }
     }
 }
@@ -173,5 +176,19 @@ struct Location: Hashable, Comparable {
     
     var isOpen = false
     var hasFlag = false
+}
+
+extension Dictionary where Key == Location, Value == String {
+    mutating func updateLocation(location: Location, isOpen: Bool, hasFlag: Bool) -> String? {
+        if let chosenLocation = self.keys.firstIndex(where: { $0 == location }) {
+            let locationValue = self[location]
+            self.remove(at: chosenLocation)
+            let updatedLocation = Location(x: location.x, y: location.y, isOpen: isOpen, hasFlag: hasFlag)
+            self[updatedLocation] = locationValue
+            return locationValue
+        } else {
+            return nil
+        }
+    }
 }
 

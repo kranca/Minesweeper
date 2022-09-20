@@ -15,7 +15,7 @@ struct ContentView: View {
             Color(uiColor: DrawingConstants.background)
                 .ignoresSafeArea()
             VStack {
-                Text("Bombs left: \(viewModel.bombs - viewModel.flags)")
+                Text(viewModel.firstLocationOpen ? "Bombs left: \(viewModel.bombs - viewModel.flags)" : "Dig first hole to start game")
                     .foregroundColor(Color(uiColor: DrawingConstants.text))
                     .bold()
                 let columns: [GridItem] = Array(repeating: .init(.fixed(25)), count: viewModel.width)
@@ -28,7 +28,7 @@ struct ContentView: View {
                                 .foregroundColor(Color(uiColor: DrawingConstants.text))
                                 .opacity(location.isOpen ? 1 : 0)
                             Text("🚩")
-                                .opacity(location.hasFlag ? 1: 0)
+                                .opacity(location.hasFlag ? 1 : 0)
                         }
                         .frame(minWidth: 25, minHeight: 25)
                         .onTapGesture {

@@ -40,15 +40,20 @@ class MinesweeperGame: ObservableObject {
     var flags: Int {
         model.flagsCount
     }
+    
+    var firstLocationOpen: Bool {
+        model.gameHasStarted
+    }
+    
+    var gameHasEnded: Bool {
+        model.gameHasEnded
+    }
 
     
     // MARK: - Intents
-    var firstLocationOpen = false
-    
     func open(_ location: Location) {
-        if !firstLocationOpen {
+        if !model.gameHasStarted {
             model.openFirst(location)
-            firstLocationOpen = true
         } else {
             model.open(location)
         }
