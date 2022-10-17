@@ -24,7 +24,7 @@ struct ContentView: View {
                         ZStack {
                             RoundedRectangle(cornerRadius: 5)
                                 .foregroundColor(location.isOpen ? Color(uiColor: DrawingConstants.openLocation) : Color(uiColor: DrawingConstants.untouchedLocation))
-                            Text(viewModel.board[location]!)
+                            viewModel.getValue(for: location)?
                                 .foregroundColor(Color(uiColor: DrawingConstants.text))
                                 .opacity(location.isOpen ? 1 : 0)
                             Text("🚩")

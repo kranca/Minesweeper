@@ -6,14 +6,13 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct Game {
     private let width: Int
     private let height: Int
     
-    private var board: [Location : String]
-    
-    private var bombs = [Location]()
+    private var board: [Location]
     
     private(set) var gameHasStarted = false
     private(set) var gameHasEnded = false
@@ -21,12 +20,13 @@ struct Game {
     init(width: Int, height: Int) {
         self.width = width
         self.height = height
-        self.board = [Location: String]()
+        self.board = [Location]()
         
         // populate board with 0's
-        for y in 0...(height - 1) {
-            for x in 0...(width - 1) {
-                board[Location(x: x, y: y)] = "0"
+        for y in 0..<height {
+            for x in 0..<width {
+                let location = Location(x: x, y: y, value: 0)
+                board.append(location)
             }
         }
     }
@@ -35,35 +35,35 @@ struct Game {
         var neighbours = [Location]()
         // left-up
         if location.x > 0 && location.y > 0 {
-            neighbours.append(Location(x: location.x - 1, y: location.y - 1))
+            neighbours.append(board.first(where: { $0.x == location.x - 1 && $0.y == location.y - 1 })!)
         }
         // up
         if location.y > 0 {
-            neighbours.append(Location(x: location.x, y: location.y - 1))
+            neighbours.append(board.first(where: { $0.x == location.x && $0.y == location.y - 1 })!)
         }
         // right-up
         if location.x < width - 1 && location.y > 0 {
-            neighbours.append(Location(x: location.x + 1, y: location.y - 1))
+            neighbours.append(board.first(where: { $0.x == location.x + 1 && $0.y == location.y - 1 })!)
         }
         // left
         if location.x > 0 {
-            neighbours.append(Location(x: location.x - 1, y: location.y))
+            neighbours.append(board.first(where: { $0.x == location.x - 1 && $0.y == location.y })!)
         }
         // right
         if location.x < width - 1 {
-            neighbours.append(Location(x: location.x + 1, y: location.y))
+            neighbours.append(board.first(where: { $0.x == location.x + 1 && $0.y == location.y })!)
         }
         // left-down
         if location.x > 0 && location.y < height - 1 {
-            neighbours.append(Location(x: location.x - 1, y: location.y + 1))
+            neighbours.append(board.first(where: { $0.x == location.x - 1 && $0.y == location.y + 1 })!)
         }
         // down
         if location.y < height - 1 {
-            neighbours.append(Location(x: location.x, y: location.y + 1))
+            neighbours.append(board.first(where: { $0.x == location.x && $0.y == location.y + 1 })!)
         }
         // right-down
         if location.x < width - 1 && location.y < height - 1 {
-            neighbours.append(Location(x: location.x + 1, y: location.y + 1))
+            neighbours.append(board.first(where: { $0.x == location.x + 1 && $0.y == location.y + 1 })!)
         }
         
         return neighbours
@@ -77,12 +77,16 @@ struct Game {
         height
     }
     
-    var getBoard: [Location : String] {
+    var getBoard: [Location] {
         board
     }
     
     var getLocations: [Location] {
-        board.keys.sorted(by: { $0 < $1 })
+        board//.sorted(by: { $0 < $1 })
+    }
+    
+    private var bombs: [Location] {
+        board.filter( { $0.hasBomb })
     }
     
     var bombsCount: Int {
@@ -91,7 +95,7 @@ struct Game {
     
     var flagsCount: Int {
         var flags = 0
-        for location in board.keys {
+        for location in board {
             if location.hasFlag {
                 flags += 1
             }
@@ -104,20 +108,17 @@ struct Game {
         for _ in 0...(width * height * 2 / 10)-1 {
             var bombLocation: Location
             repeat {
-                bombLocation = Location(x: Int.random(in: 0...width-1), y: Int.random(in: 0...height-1))
-            } while board[bombLocation] == "💣" || bombLocation == location || neighbours(of: location).contains(bombLocation)
+                bombLocation = board.randomElement()!
+            } while bombLocation == location || neighbours(of: location).contains(bombLocation) || bombLocation.hasBomb
             
-            board[bombLocation] = "💣"
-            bombs.append(bombLocation)
+            board.updateLocation(location: bombLocation, newValue: nil, hasBomb: true, isOpen: false, hasFlag: false)
         }
         
         // update locations adjacent to bombs to indicate how many bombs are directly adjacent to them
         for bomb in bombs {
             for location in neighbours(of: bomb) {
-                if board[location] != "💣" {
-                    if let noBomb = board[location] {
-                        board[location] = String(Int(noBomb)! + 1)
-                    }
+                if !location.hasBomb {
+                    board.updateLocation(location: location, newValue: location.value! + 1, hasBomb: false, isOpen: false, hasFlag: false)
                 }
             }
         }
@@ -128,30 +129,29 @@ struct Game {
     
     mutating func open(_ location: Location) {
         if !location.isOpen && !location.hasFlag && !gameHasEnded {
-            if let locationValue = board.updateLocation(location: location, isOpen: true, hasFlag: location.hasFlag) {
-                if locationValue == "0" {
-                    let neighboringToOpen = neighbours(of: location)
-                    for neighbour in neighboringToOpen {
-                        open(neighbour)
-                    }
+            board.updateLocation(location: location, newValue: location.value, hasBomb: location.hasBomb, isOpen: true, hasFlag: location.hasFlag)
+            if location.value == 0 {
+                let neighboringToOpen = neighbours(of: location)
+                for neighbour in neighboringToOpen {
+                    open(neighbour)
                 }
-                if locationValue == "💣" {
-                    showAllBombs()
-                    gameHasEnded = true
-                }
+            }
+            if location.hasBomb {
+                showAllBombs()
+                gameHasEnded = true
             }
         }
     }
     
     private mutating func showAllBombs() {
         for location in bombs {
-            _ = board.updateLocation(location: location, isOpen: true, hasFlag: location.hasFlag)
+            board.updateLocation(location: location, newValue: location.value, hasBomb: location.hasBomb, isOpen: true, hasFlag: location.hasFlag)
         }
     }
     
     mutating func placeFlag(on location: Location) {
         if !location.isOpen && gameHasStarted && !gameHasEnded {
-            _ = board.updateLocation(location: location, isOpen: location.isOpen, hasFlag: !location.hasFlag)
+            board.updateLocation(location: location, newValue: location.value, hasBomb: location.hasBomb, isOpen: location.isOpen, hasFlag: !location.hasFlag)
         }
     }
 }
@@ -173,21 +173,20 @@ struct Location: Hashable, Comparable {
     
     let x: Int
     let y: Int
+    var value: Int?
     
+    var hasBomb = false
     var isOpen = false
     var hasFlag = false
 }
 
-extension Dictionary where Key == Location, Value == String {
-    mutating func updateLocation(location: Location, isOpen: Bool, hasFlag: Bool) -> String? {
-        if let chosenLocation = self.keys.firstIndex(where: { $0 == location }) {
-            let locationValue = self[location]
-            self.remove(at: chosenLocation)
-            let updatedLocation = Location(x: location.x, y: location.y, isOpen: isOpen, hasFlag: hasFlag)
-            self[updatedLocation] = locationValue
-            return locationValue
-        } else {
-            return nil
+extension Array where Element == Location {
+    mutating func updateLocation(location: Location, newValue: Int?, hasBomb: Bool, isOpen: Bool, hasFlag: Bool) {
+        if let chosenLocation = self.firstIndex(where: { $0.x == location.x && $0.y == location.y }) {
+            self[chosenLocation].value = newValue
+            self[chosenLocation].hasBomb = hasBomb
+            self[chosenLocation].isOpen = isOpen
+            self[chosenLocation].hasFlag = hasFlag
         }
     }
 }
