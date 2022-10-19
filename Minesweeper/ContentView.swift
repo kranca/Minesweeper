@@ -18,7 +18,7 @@ struct ContentView: View {
                 Text(viewModel.firstLocationOpen ? "Bombs left: \(viewModel.bombs - viewModel.flags)" : "Dig first hole to start game")
                     .foregroundColor(Color(uiColor: DrawingConstants.text))
                     .bold()
-                GridThatFits(items: viewModel.locations, columnsCount: viewModel.width) { location in
+                GridThatFits(items: viewModel.locations, columnsCount: viewModel.width, rowCount: viewModel.height) { location in
                     GeometryReader { geometry in
                         ZStack {
                             RoundedRectangle(cornerRadius: 5)
