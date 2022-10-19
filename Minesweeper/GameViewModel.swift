@@ -8,15 +8,29 @@
 import SwiftUI
 
 class MinesweeperGame: ObservableObject {
-    private static func createMinesweeperGame() -> Game {
-        return Game(width: 8, height: 12)
+    private static let stringContent = [
+        0 : nil,
+        1 : Image(systemName: "1.circle.fill"),
+        2 : Image(systemName: "2.circle.fill"),
+        3 : Image(systemName: "3.circle.fill"),
+        4 : Image(systemName: "4.circle.fill"),
+        5 : Image(systemName: "5.circle.fill"),
+        6 : Image(systemName: "6.circle.fill"),
+        7 : Image(systemName: "7.circle.fill"),
+        8 : Image(systemName: "6.circle.fill"),
+        nil: Image(systemName: "exclamationmark.triangle") //"exclamationmark.octagon.fill" "sun.min" "rays"
+    ]
+    private static func createMinesweeperGame() -> Game<Image?> {
+        return Game(width: 8, height: 12, content: stringContent)
     }
     
-    @Published private var model: Game
+    @Published private var model: Game<Image?>
     
     init() {
         self.model = MinesweeperGame.createMinesweeperGame()
     }
+    
+    let flag = "🚩"
     
     var board: [Location] {
         model.getBoard
@@ -50,25 +64,7 @@ class MinesweeperGame: ObservableObject {
     }
     
     func getValue(for location: Location) -> Image? {
-        if location.value == 1 {
-            return Image(systemName: "1.circle")
-        } else if location.value == 2 {
-            return Image(systemName: "2.circle")
-        } else if location.value == 3 {
-            return Image(systemName: "3.circle")
-        } else if location.value == 4 {
-            return Image(systemName: "4.circle")
-        } else if location.value == 5 {
-            return Image(systemName: "5.circle")
-        } else if location.value == 6 {
-            return Image(systemName: "6.circle")
-        } else if location.value == 7 {
-            return Image(systemName: "7.circle.fill")
-        } else if location.value == 0 {
-            return nil
-        } else {
-            return Image(systemName: "exclamationmark.octagon.fill")
-        }
+        model.getValue(for: location) ?? nil
     }
 
     

@@ -18,19 +18,19 @@ struct ContentView: View {
                 Text(viewModel.firstLocationOpen ? "Bombs left: \(viewModel.bombs - viewModel.flags)" : "Dig first hole to start game")
                     .foregroundColor(Color(uiColor: DrawingConstants.text))
                     .bold()
-                let columns: [GridItem] = Array(repeating: .init(.fixed(25)), count: viewModel.width)
-                LazyVGrid(columns: columns) {
-                    ForEach(viewModel.locations, id: \.self) { location in
+                GridThatFits(items: viewModel.locations, columnsCount: viewModel.width) { location in
+                    GeometryReader { geometry in
                         ZStack {
                             RoundedRectangle(cornerRadius: 5)
                                 .foregroundColor(location.isOpen ? Color(uiColor: DrawingConstants.openLocation) : Color(uiColor: DrawingConstants.untouchedLocation))
                             viewModel.getValue(for: location)?
                                 .foregroundColor(Color(uiColor: DrawingConstants.text))
                                 .opacity(location.isOpen ? 1 : 0)
-                            Text("🚩")
+                            Text(viewModel.flag)
                                 .opacity(location.hasFlag ? 1 : 0)
                         }
-                        .frame(minWidth: 25, minHeight: 25)
+                        .font(.system(size: geometry.size.width * 0.8))
+                        //.frame(minWidth: 25, minHeight: 25)
                         .onTapGesture {
                             viewModel.open(location)
                         }

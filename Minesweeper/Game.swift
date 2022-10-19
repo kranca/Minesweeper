@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct Game {
+struct Game<Content> {
     private let width: Int
     private let height: Int
     
@@ -17,10 +17,13 @@ struct Game {
     private(set) var gameHasStarted = false
     private(set) var gameHasEnded = false
     
-    init(width: Int, height: Int) {
+    let content: [Int? : Content?]
+    
+    init(width: Int, height: Int, content: [Int? : Content?]) {
         self.width = width
         self.height = height
         self.board = [Location]()
+        self.content = content
         
         // populate board with 0's
         for y in 0..<height {
@@ -102,6 +105,11 @@ struct Game {
         }
         return flags
     }
+    
+    func getValue(for location: Location) -> Content? {
+        content[location.value] ?? nil
+    }
+    
     
     mutating func openFirst(_ location: Location) {
         // define random locations for the bombs and avoid more than one bomb in the same location or a bomb on first opened location or direct neighbours
