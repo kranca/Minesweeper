@@ -17,6 +17,7 @@ struct ContentView: View {
             VStack {
                 Text(viewModel.firstLocationOpen ? "Bombs left: \(viewModel.bombs - viewModel.flags)" : "Dig first hole to start game")
                     .foregroundColor(Color(uiColor: DrawingConstants.text))
+                    .font(.title)
                     .bold()
                 GridThatFits(items: viewModel.locations, columnsCount: viewModel.width, rowCount: viewModel.height) { location in
                     GeometryReader { geometry in
@@ -30,7 +31,6 @@ struct ContentView: View {
                                 .opacity(location.hasFlag ? 1 : 0)
                         }
                         .font(.system(size: geometry.size.width * 0.8))
-                        //.frame(minWidth: 25, minHeight: 25)
                         .onTapGesture {
                             viewModel.open(location)
                         }
@@ -39,7 +39,23 @@ struct ContentView: View {
                         }
                     }
                 }
+                didWin().font(.title)
             }
+        }
+    }
+    
+    @ViewBuilder
+    private func didWin() -> some View {
+        if viewModel.gameHasEnded {
+            if viewModel.didWin {
+                Text("You won!! 🎉")
+            } else {
+                Text("You lost 😩")
+            }
+        } else if viewModel.gameHasStarted {
+            Text("Keep on diging...")
+        } else {
+            Text(" ")
         }
     }
     

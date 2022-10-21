@@ -59,8 +59,16 @@ class MinesweeperGame: ObservableObject {
         model.gameHasStarted
     }
     
+    var gameHasStarted: Bool {
+        model.gameHasStarted
+    }
+    
     var gameHasEnded: Bool {
         model.gameHasEnded
+    }
+    
+    var didWin: Bool {
+        model.didWin
     }
     
     func getValue(for location: Location) -> Image? {

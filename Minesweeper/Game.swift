@@ -106,6 +106,13 @@ struct Game<Content> {
         return flags
     }
     
+    var didWin: Bool {
+        // all bombs on board have a flag and flag count == bombs count
+        bombs.filter { !$0.hasFlag }.isEmpty && board.filter { $0.hasFlag }.count == bombsCount
+        // or all locations without a bomb have been opend
+        || board.filter { !$0.hasBomb }.filter { $0.isOpen }.count == width * height - bombsCount
+    }
+    
     func getValue(for location: Location) -> Content? {
         content[location.value] ?? nil
     }
@@ -148,6 +155,9 @@ struct Game<Content> {
                 showAllBombs()
                 gameHasEnded = true
             }
+            if didWin {
+                gameHasEnded = true
+            }
         }
     }
     
@@ -160,6 +170,10 @@ struct Game<Content> {
     mutating func placeFlag(on location: Location) {
         if !location.isOpen && gameHasStarted && !gameHasEnded {
             board.updateLocation(location: location, newValue: location.value, hasBomb: location.hasBomb, isOpen: location.isOpen, hasFlag: !location.hasFlag)
+            
+            if didWin {
+                gameHasEnded = true
+            }
         }
     }
 }
