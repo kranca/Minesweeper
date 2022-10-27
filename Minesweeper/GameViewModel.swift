@@ -8,7 +8,7 @@
 import SwiftUI
 
 class MinesweeperGame: ObservableObject {
-    private static let stringContent = [
+    private static let imageContent = [
         0 : nil,
         1 : Image(systemName: "1.circle.fill"),
         2 : Image(systemName: "2.circle.fill"),
@@ -21,7 +21,7 @@ class MinesweeperGame: ObservableObject {
         nil: Image(systemName: "exclamationmark.triangle") //"exclamationmark.octagon.fill" "sun.min" "rays"
     ]
     private static func createMinesweeperGame() -> Game<Image?> {
-        return Game(width: 8, height: 12, content: stringContent)
+        return Game(width: 8, height: 12, content: imageContent)
     }
     
     @Published private var model: Game<Image?>
@@ -87,5 +87,13 @@ class MinesweeperGame: ObservableObject {
     
     func placeFlag(on location: Location) {
         model.placeFlag(on: location)
+    }
+    
+    func startNewGame(width: Int, height: Int) {
+        model = Game(width: width, height: height, content: MinesweeperGame.imageContent)
+    }
+    
+    func restartGame() {
+        model = Game(width: width, height: height, content: MinesweeperGame.imageContent)
     }
 }

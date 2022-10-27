@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C415C3392907AB66001A440A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C415C3382907AB65001A440A /* SettingsView.swift */; };
+		C415C33B29094C05001A440A /* BoardStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C415C33A29094C05001A440A /* BoardStore.swift */; };
 		C4AC6B5628B603CE00B7A074 /* MinesweeperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4AC6B5528B603CE00B7A074 /* MinesweeperApp.swift */; };
 		C4AC6B5828B603CE00B7A074 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4AC6B5728B603CE00B7A074 /* ContentView.swift */; };
 		C4AC6B5A28B603CF00B7A074 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C4AC6B5928B603CF00B7A074 /* Assets.xcassets */; };
@@ -37,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C415C3382907AB65001A440A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		C415C33A29094C05001A440A /* BoardStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardStore.swift; sourceTree = "<group>"; };
 		C4AC6B5228B603CE00B7A074 /* Minesweeper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Minesweeper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4AC6B5528B603CE00B7A074 /* MinesweeperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinesweeperApp.swift; sourceTree = "<group>"; };
 		C4AC6B5728B603CE00B7A074 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -102,9 +106,11 @@
 			children = (
 				C4AC6B5528B603CE00B7A074 /* MinesweeperApp.swift */,
 				C4AC6B5728B603CE00B7A074 /* ContentView.swift */,
+				C415C3382907AB65001A440A /* SettingsView.swift */,
 				C4AC6B7F28B6044A00B7A074 /* Game.swift */,
 				C4AC6B8328FFD58200B7A074 /* GridThatFits.swift */,
 				C4AC6B8128B7413300B7A074 /* GameViewModel.swift */,
+				C415C33A29094C05001A440A /* BoardStore.swift */,
 				C4AC6B5928B603CF00B7A074 /* Assets.xcassets */,
 				C4AC6B5B28B603CF00B7A074 /* Preview Content */,
 			);
@@ -266,9 +272,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C415C33B29094C05001A440A /* BoardStore.swift in Sources */,
 				C4AC6B8228B7413300B7A074 /* GameViewModel.swift in Sources */,
 				C4AC6B5828B603CE00B7A074 /* ContentView.swift in Sources */,
 				C4AC6B8028B6044A00B7A074 /* Game.swift in Sources */,
+				C415C3392907AB66001A440A /* SettingsView.swift in Sources */,
 				C4AC6B5628B603CE00B7A074 /* MinesweeperApp.swift in Sources */,
 				C4AC6B8428FFD58200B7A074 /* GridThatFits.swift in Sources */,
 			);
