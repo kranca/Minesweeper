@@ -80,10 +80,6 @@ struct Game<Content> {
         height
     }
     
-    var getBoard: [Location] {
-        board
-    }
-    
     var getLocations: [Location] {
         board//.sorted(by: { $0 < $1 })
     }

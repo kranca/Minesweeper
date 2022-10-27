@@ -32,10 +32,6 @@ class MinesweeperGame: ObservableObject {
     
     let flag = "🚩"
     
-    var board: [Location] {
-        model.getBoard
-    }
-    
     var width: Int {
         model.getWidth
     }
@@ -69,6 +65,16 @@ class MinesweeperGame: ObservableObject {
     
     var didWin: Bool {
         model.didWin
+    }
+    
+    var availableSize = CGSize()
+    
+    var minimumWidth: Double = 50.0
+    
+    func updateAvailableSize(with newSize: CGSize) {
+        availableSize = newSize
+        print("width: \(availableSize.width / Double(width))")
+        print("height: \(availableSize.height / Double(height))")
     }
     
     func getValue(for location: Location) -> Image? {

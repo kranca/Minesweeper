@@ -13,12 +13,12 @@ struct SettingsView: View {
         Form {
             Section(header: Text("Width")) {
                 Stepper(String(viewModel.width),
-                        onIncrement: { viewModel.startNewGame(width: viewModel.width + 1, height: viewModel.height) },
+                        onIncrement: { viewModel.availableSize.width / Double(viewModel.width) > viewModel.minimumWidth ? viewModel.startNewGame(width: viewModel.width + 1, height: viewModel.height) : nil },
                         onDecrement: { viewModel.width > 4 ? viewModel.startNewGame(width: viewModel.width - 1, height: viewModel.height) : nil })
             }
             Section(header: Text("Height")) {
                 Stepper(String(viewModel.height),
-                        onIncrement: { viewModel.startNewGame(width: viewModel.width, height: viewModel.height + 1)},
+                        onIncrement: { viewModel.availableSize.height / Double(viewModel.height) > viewModel.minimumWidth ? viewModel.startNewGame(width: viewModel.width, height: viewModel.height + 1) : nil },
                         onDecrement: { viewModel.height > 6 ? viewModel.startNewGame(width: viewModel.width, height: viewModel.height - 1) : nil })
             }
         }

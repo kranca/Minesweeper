@@ -31,24 +31,30 @@ struct ContentView: View {
     }
     
     var boardView: some View {
-        GridThatFits(items: viewModel.locations, columnsCount: viewModel.width, rowCount: viewModel.height) { location in
-            GeometryReader { geometry in
-                ZStack {
-                    RoundedRectangle(cornerRadius: 5)
-                        .foregroundColor(location.isOpen ? Color(uiColor: DrawingConstants.openLocation) : Color(uiColor: DrawingConstants.untouchedLocation))
-                    viewModel.getValue(for: location)?
-                        .foregroundColor(Color(uiColor: DrawingConstants.text))
-                        .opacity(location.isOpen ? 1 : 0)
-                    Text(viewModel.flag)
-                        .opacity(location.hasFlag ? 1 : 0)
+        GeometryReader { boardGeometry in
+            GridThatFits(items: viewModel.locations, columnsCount: viewModel.width, rowCount: viewModel.height) { location in
+                GeometryReader { locationGeometry in
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 5)
+                            .foregroundColor(location.isOpen ? Color(uiColor: DrawingConstants.openLocation) : Color(uiColor: DrawingConstants.untouchedLocation))
+                        viewModel.getValue(for: location)?
+                            .foregroundColor(Color(uiColor: DrawingConstants.text))
+                            .opacity(location.isOpen ? 1 : 0)
+                        Text(viewModel.flag)
+                            .opacity(location.hasFlag ? 1 : 0)
+                    }
+                    .font(.system(size: locationGeometry.size.width * 0.8))
+                    .onTapGesture {
+                        viewModel.open(location)
+                    }
+                    .onLongPressGesture {
+                        viewModel.placeFlag(on: location)
+                    }
                 }
-                .font(.system(size: geometry.size.width * 0.8))
-                .onTapGesture {
-                    viewModel.open(location)
-                }
-                .onLongPressGesture {
-                    viewModel.placeFlag(on: location)
-                }
+            }.onAppear {
+                viewModel.updateAvailableSize(with: boardGeometry.size)
+            }.onChange(of: viewModel.locations.count) { _ in
+                viewModel.updateAvailableSize(with: boardGeometry.size)
             }
         }
     }
