@@ -19,18 +19,36 @@ struct Game<Content> {
     
     let content: [Int? : Content?]
     
+    private mutating func populateBoardWithZeros(width: Int, height: Int) {
+        for y in 0..<height {
+            for x in 0..<width {
+                let location = Location(x: x, y: y, value: 0)
+                board.append(location)
+            }
+        }
+    }
+    
     init(width: Int, height: Int, content: [Int? : Content?]) {
         self.width = width
         self.height = height
         self.board = [Location]()
         self.content = content
         
-        // populate board with 0's
-        for y in 0..<height {
-            for x in 0..<width {
-                let location = Location(x: x, y: y, value: 0)
-                board.append(location)
-            }
+        populateBoardWithZeros(width: width, height: height)
+    }
+    
+    init(using storedLocations: [Location], content: [Int? : Content?]) {
+        self.board = storedLocations
+        self.width = storedLocations.max(by: { $0.x < $1.x })!.x + 1
+        self.height = storedLocations.max(by: { $0.y < $1.y })!.y + 1
+        self.content = content
+        if storedLocations.contains(where: { $0.isOpen }) {
+            gameHasStarted = true
+        }
+        if storedLocations.contains(where: { $0.isOpen && $0.hasBomb || didWin }){
+            gameHasStarted = false
+            board = [Location]()
+            populateBoardWithZeros(width: width, height: height)
         }
     }
     
@@ -174,7 +192,7 @@ struct Game<Content> {
     }
 }
 
-struct Location: Hashable, Comparable {
+struct Location: Hashable, Comparable, Codable {
     static func < (lhs: Location, rhs: Location) -> Bool {
         if lhs.y < rhs.y {
             return true

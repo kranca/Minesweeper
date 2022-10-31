@@ -24,10 +24,19 @@ class MinesweeperGame: ObservableObject {
         return Game(width: 8, height: 12, content: imageContent)
     }
     
-    @Published private var model: Game<Image?>
+    @Published private var model: Game<Image?> {
+        didSet {
+            storeInUserDefaults()
+        }
+    }
     
     init() {
-        self.model = MinesweeperGame.createMinesweeperGame()
+        
+        if let jsonData = UserDefaults.standard.data(forKey: userDefaultKey), let restoredLocations = try? JSONDecoder().decode([Location].self, from: jsonData) {
+            self.model = Game(using: restoredLocations, content: MinesweeperGame.imageContent)
+        } else {
+            self.model = MinesweeperGame.createMinesweeperGame()
+        }
     }
     
     let flag = "🚩"
@@ -80,7 +89,13 @@ class MinesweeperGame: ObservableObject {
     func getValue(for location: Location) -> Image? {
         model.getValue(for: location) ?? nil
     }
-
+    
+    // MARK: - Saving game
+    private let userDefaultKey = "Minesweeper Board"
+    
+    private func storeInUserDefaults() {
+        UserDefaults.standard.set(try? JSONEncoder().encode(locations), forKey: userDefaultKey)
+    }
     
     // MARK: - Intents
     func open(_ location: Location) {
