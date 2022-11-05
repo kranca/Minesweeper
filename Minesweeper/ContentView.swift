@@ -32,25 +32,29 @@ struct ContentView: View {
     
     @ViewBuilder
     var boardView: some View {
+        var previousOrientation: UIDeviceOrientation = .portrait
+        
         GeometryReader { boardGeometry in
-            if UIDevice.current.orientation.isPortrait {
-                verticalGrid
-                    .onAppear { viewModel.updateAvailableSize(with: boardGeometry.size) }
-                    .onChange(of: viewModel.locations.count) { _ in
-                        viewModel.updateAvailableSize(with: boardGeometry.size)
+            Group {
+                if UIDevice.current.orientation.isFlat {
+                    if previousOrientation.isPortrait {
+                        verticalGrid
+                    } else if previousOrientation.isLandscape {
+                        horizontalGrid
                     }
-                    .onChange(of: UIDevice.current.orientation) { _ in
-                        viewModel.updateAvailableSize(with: boardGeometry.size)
-                    }
-            } else {
-                horizontalGrid
-                    .onAppear { viewModel.updateAvailableSize(with: boardGeometry.size) }
-                    .onChange(of: viewModel.locations.count) { _ in
-                        viewModel.updateAvailableSize(with: boardGeometry.size)
-                    }
-                    .onChange(of: UIDevice.current.orientation) { _ in
-                        viewModel.updateAvailableSize(with: boardGeometry.size)
-                    }
+                } else if UIDevice.current.orientation.isLandscape {
+                    horizontalGrid
+                } else {
+                    verticalGrid
+                }
+            }
+            .onAppear { viewModel.updateAvailableSize(with: boardGeometry.size) }
+            .onChange(of: viewModel.locations.count) { _ in
+                viewModel.updateAvailableSize(with: boardGeometry.size)
+            }
+            .onChange(of: UIDevice.current.orientation) { newOrientation in
+                viewModel.updateAvailableSize(with: boardGeometry.size)
+                previousOrientation = newOrientation
             }
         }
     }
