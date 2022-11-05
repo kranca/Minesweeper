@@ -34,8 +34,10 @@ class MinesweeperGame: ObservableObject {
         
         if let jsonData = UserDefaults.standard.data(forKey: userDefaultKey), let restoredLocations = try? JSONDecoder().decode([Location].self, from: jsonData) {
             self.model = Game(using: restoredLocations, content: MinesweeperGame.imageContent)
+            print(locationsForHorizontalOrientation)
         } else {
             self.model = MinesweeperGame.createMinesweeperGame()
+            print(locationsForHorizontalOrientation)
         }
     }
     
@@ -52,6 +54,11 @@ class MinesweeperGame: ObservableObject {
     var locations: [Location] {
         model.getLocations
     }
+    
+    var locationsForHorizontalOrientation: [Location] {
+        model.getLocationsForHorizontalOrientation
+    }
+    
     var bombs: Int {
         model.bombsCount
     }

@@ -102,6 +102,10 @@ struct Game<Content> {
         board//.sorted(by: { $0 < $1 })
     }
     
+    var getLocationsForHorizontalOrientation: [Location] {
+        board.sorted(by: { $0.x > $1.x })
+    }
+    
     private var bombs: [Location] {
         board.filter( { $0.hasBomb })
     }
