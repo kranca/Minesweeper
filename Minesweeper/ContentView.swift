@@ -61,46 +61,33 @@ struct ContentView: View {
     
     var horizontalGrid: some View {
         GridThatFits(items: viewModel.locationsForHorizontalOrientation, columnsCount: viewModel.height, rowCount: viewModel.width) { location in
-            GeometryReader { locationGeometry in
-                ZStack {
-                    RoundedRectangle(cornerRadius: 5)
-                        .foregroundColor(location.isOpen ? Color(uiColor: DrawingConstants.openLocation) : Color(uiColor: DrawingConstants.untouchedLocation))
-                    viewModel.getValue(for: location)?
-                        .foregroundColor(Color(uiColor: DrawingConstants.text))
-                        .opacity(location.isOpen ? 1 : 0)
-                    Text(viewModel.flag)
-                        .opacity(location.hasFlag ? 1 : 0)
-                }
-                .font(.system(size: locationGeometry.size.width * 0.8))
-                .onTapGesture {
-                    viewModel.open(location)
-                }
-                .onLongPressGesture {
-                    viewModel.placeFlag(on: location)
-                }
-            }
+            singleBoardSquare(for: location)
         }
     }
     
     var verticalGrid: some View {
         GridThatFits(items: viewModel.locations, columnsCount: viewModel.width, rowCount: viewModel.height) { location in
-            GeometryReader { locationGeometry in
-                ZStack {
-                    RoundedRectangle(cornerRadius: 5)
-                        .foregroundColor(location.isOpen ? Color(uiColor: DrawingConstants.openLocation) : Color(uiColor: DrawingConstants.untouchedLocation))
-                    viewModel.getValue(for: location)?
-                        .foregroundColor(Color(uiColor: DrawingConstants.text))
-                        .opacity(location.isOpen ? 1 : 0)
-                    Text(viewModel.flag)
-                        .opacity(location.hasFlag ? 1 : 0)
-                }
-                .font(.system(size: locationGeometry.size.width * 0.8))
-                .onTapGesture {
-                    viewModel.open(location)
-                }
-                .onLongPressGesture {
-                    viewModel.placeFlag(on: location)
-                }
+            singleBoardSquare(for: location)
+        }
+    }
+    
+    func singleBoardSquare(for location: Location) -> some View {
+        GeometryReader { locationGeometry in
+            ZStack {
+                RoundedRectangle(cornerRadius: DrawingConstants.cornerRadius)
+                    .foregroundColor(location.isOpen ? Color(uiColor: DrawingConstants.openLocation) : Color(uiColor: DrawingConstants.untouchedLocation))
+                viewModel.getValue(for: location)?
+                    .foregroundColor(Color(uiColor: DrawingConstants.text))
+                    .opacity(location.isOpen ? 1 : 0)
+                Text(viewModel.flag)
+                    .opacity(location.hasFlag ? 1 : 0)
+            }
+            .font(DrawingConstants.fontSize(for: locationGeometry))
+            .onTapGesture {
+                viewModel.open(location)
+            }
+            .onLongPressGesture {
+                viewModel.placeFlag(on: location)
             }
         }
     }
@@ -148,6 +135,10 @@ struct ContentView: View {
         static let untouchedLocation = UIColor(red: 0.28, green: 0.50, blue: 0.39, alpha: 1.00)
         static let openLocation = UIColor(red: 0.94, green: 0.72, blue: 0.42, alpha: 1.00)
         static let text = UIColor(red: 0.10, green: 0.18, blue: 0.22, alpha: 1.00)
+        static let cornerRadius: CGFloat = 5
+        static func fontSize(for locationGeometry: GeometryProxy) -> Font {
+            Font.system(size: locationGeometry.size.width * 0.8)
+        }
     }
 }
 
